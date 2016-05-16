@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data", "Data\Data.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApplication1", "ConsoleApplication1\ConsoleApplication1.csproj", "{32AC89EC-4FF2-4CC8-A478-73F941B9947C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tester", "..\HPE_Tester\Tester\Tester.csproj", "{456FAC45-F48A-442A-8119-783409AB8AF0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{32AC89EC-4FF2-4CC8-A478-73F941B9947C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{32AC89EC-4FF2-4CC8-A478-73F941B9947C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{32AC89EC-4FF2-4CC8-A478-73F941B9947C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{456FAC45-F48A-442A-8119-783409AB8AF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{456FAC45-F48A-442A-8119-783409AB8AF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{456FAC45-F48A-442A-8119-783409AB8AF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{456FAC45-F48A-442A-8119-783409AB8AF0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
