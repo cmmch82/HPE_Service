@@ -67,12 +67,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Models\Models.csproj">
-      <Project>{85bed0d2-deac-4a6b-b4ef-bb8709f00e84}</Project>
-      <Name>Models</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Migrations\201605150503299_Initial.resx">
       <DependentUpon>201605150503299_Initial.cs</DependentUpon>
     </EmbeddedResource>

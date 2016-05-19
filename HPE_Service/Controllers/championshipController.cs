@@ -22,16 +22,18 @@ namespace HPE_Service.Controllers
 
         }
 
-
-        // POST: api/championship/result
-        [Route("api/championship/result")]
-        public IHttpActionResult Post(string first, string second)
+        [HttpPost]
+        public HttpResponseMessage Post([FromBody]string first, [FromBody]string second)
         {
 
             var service = new RPSService();
             service.ManualScoreEntry(first, second);
-        
-            return Ok();
+
+            HttpResponseMessage response = new HttpResponseMessage();
+             response.StatusCode = HttpStatusCode.OK;
+
+
+            return response;
         }
         [Route("api/championship/new")]
         public IEnumerable<Player> Post(HttpRequestMessage request)
@@ -44,8 +46,9 @@ namespace HPE_Service.Controllers
 
         }
 
-        // DELETE: api/championship/5
-        public void Delete(int id)
+        // DELETE: api/championship/
+        [Route("api/championship/truncate")]
+        public void Delete()
         {
             var service = new RPSService();
             service.CleanDb();
