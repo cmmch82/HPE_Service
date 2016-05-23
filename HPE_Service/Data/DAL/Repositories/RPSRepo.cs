@@ -23,7 +23,7 @@ namespace HPE_Service.Data.DAL.Repositories
         {
             using (var command = _context.CreateCommand())
             {
-                command.CommandText = String.Format("Select Top {0} UserName, UserScore from Player ", top); 
+                command.CommandText = String.Format("Select Top {0} UserName, UserScore from Player order by UserScore desc ", top); 
 
                 return this.ToList(command).ToList();
             }
@@ -53,7 +53,7 @@ namespace HPE_Service.Data.DAL.Repositories
         {
             using (var command = _context.CreateCommand())
             {
-                command.CommandText = String.Format("Insert into Player values ( {0}, {1})", player.UserName, player.UserScore );
+                command.CommandText = string.Format("Insert into Player values ( {0}, {1})", player.UserName, player.UserScore );
 
                 //return this.ToList(command).ToList();
             }
@@ -79,6 +79,7 @@ namespace HPE_Service.Data.DAL.Repositories
             using (var command = _context.CreateCommand())
             {
                 command.CommandText = "truncate table Player";
+                command.ExecuteNonQuery();
 
                 //return this.ToList(command).ToList();
             }

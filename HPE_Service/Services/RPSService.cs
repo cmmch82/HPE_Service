@@ -60,7 +60,6 @@ namespace HPE_Service.Services
                 GetWinner();
                 Completed = true;
             }
-
             private void Decode()
             {
 
@@ -336,6 +335,20 @@ namespace HPE_Service.Services
 
              PlayerRepo.CleanDb();
 
+
+        }
+
+        public BracketedGame TestSolution(string onegame)
+        {
+            BracketedGame Game = new BracketedGame(onegame);
+            Game.RunGame();
+            return Game;
+        }
+        public Tournament Narrator(string gamedata) {
+
+            Tournament Tournament = new Tournament(gamedata);
+            Tournament.Start();
+            return Tournament;
 
         }
 
