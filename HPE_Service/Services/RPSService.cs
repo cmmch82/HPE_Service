@@ -1,7 +1,9 @@
 ﻿using HPE_Service.Data.DAL;
 using HPE_Service.Data.DAL.Repositories;
 using HPE_Service.Ëntities;
+using HPE_Service.ProblemSolution;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -11,316 +13,60 @@ namespace HPE_Service.Services
 {
     public class RPSService
     {
-
-        public class BracketedFile
-        {
-            public string Path { get; set; }
-            public string Ouput { get; set; }
-
-
-            public BracketedFile(string FilePath)
-            {
-                Path = FilePath;
-                Load();
-            }
-
-            public void Load()
-            {
-                string text = System.IO.File.ReadAllText(@Path);
-            }
-
-        }
-
-        public class BracketedGame
-        {
-            public string GameInput { get; set; }
-            public string GameOutput { get; set; }
-            public string Winner { get; set; }
-            public string WinnerMove { get; set; }
-            public string Loser { get; set; }
-            public string LoserMove { get; set; }
-            public bool Completed { get; set; }
-            public bool Promoted { get; set; }
-            private string P1 { get; set; }
-            private string P1Move { get; set; }
-            private string P2 { get; set; }
-            private string P2Move { get; set; }
-
-
-            public BracketedGame(string Input)
-            {
-
-                GameInput = Input;
-                Promoted = false;
-            }
-
-            public void RunGame()
-            {
-                Decode();
-                GetWinner();
-                Completed = true;
-            }
-            private void Decode()
-            {
-
-                char[] delimiterChars = { '"', '"' };
-                string[] words = GameInput.Split(delimiterChars);
-
-
-                var reg = new Regex("\".*?\"");//"\".*?\"");
-                var matches = reg.Matches(GameInput);
-                if (matches.Count != 4)
-                {
-                    //if (words.Length != 4)
-                    //{
-                    throw new System.ArgumentException("There is some missing player or strategy data, please check the game bracketed list.", "Game Error");
-                }
-                else
-                {
-                    P1 = matches[0].ToString();
-                    P1 = P1.Remove(P1.IndexOf("\""), 1);
-                    P1 = P1.Remove(P1.LastIndexOf("\""), 1);
-                    P1Move = matches[1].ToString().ToUpper();
-                    P1Move = P1Move.Remove(P1Move.IndexOf("\""), 1);
-                    P1Move = P1Move.Remove(P1Move.LastIndexOf("\""), 1);
-                    P2 = matches[2].ToString();
-                    P2 = P2.Remove(P2.IndexOf("\""), 1);
-                    P2 = P2.Remove(P2.LastIndexOf("\""), 1);
-                    P2Move = matches[3].ToString().ToUpper();
-                    P2Move = P2Move.Remove(P2Move.IndexOf("\""), 1);
-                    P2Move = P2Move.Remove(P2Move.LastIndexOf("\""), 1);
-
-                    if (!new string[] { "R", "P", "S" }.Any(s => P1Move.Contains(s)))
-                    {
-                        throw new System.ArgumentException("Invalid Strategy, please check the game bracketed list.", "Game Error");
-                    }
-
-                    if (!new string[] { "R", "P", "S" }.Any(s => P2Move.Contains(s)))
-                    {
-                        throw new System.ArgumentException("Invalid Strategy, please check the game bracketed list.", "Game Error");
-                    }
-
-                }
-
-            }
-            private void GetWinner()
-            {
-
-
-
-                switch (P1Move)
-                {
-                    case "R":
-                        switch (P2Move)
-                        {
-                            case "R":
-                                Winner = P1;
-                                WinnerMove = P1Move;
-                                Loser = P2;
-                                LoserMove = P2Move;
-                                break;
-
-                            case "P":
-                                Winner = P2;
-                                WinnerMove = P2Move;
-                                Loser = P1;
-                                LoserMove = P1Move;
-                                break;
-                            case "S":
-                                Winner = P1;
-                                WinnerMove = P1Move;
-                                Loser = P2;
-                                LoserMove = P2Move;
-                                break;
-                        }
-
-                        break;
-
-                    case "P":
-                        switch (P2Move)
-                        {
-                            case "R":
-                                Winner = P1;
-                                WinnerMove = P1Move;
-                                Loser = P2;
-                                LoserMove = P2Move;
-                                break;
-
-                            case "P":
-                                Winner = P1;
-                                WinnerMove = P1Move;
-                                Loser = P2;
-                                LoserMove = P2Move;
-                                break;
-                            case "S":
-                                Winner = P2;
-                                WinnerMove = P2Move;
-                                Loser = P1;
-                                LoserMove = P1Move;
-                                break;
-                        }
-
-                        break;
-
-                    case "S":
-                        switch (P2Move)
-                        {
-                            case "R":
-                                Winner = P2;
-                                WinnerMove = P2Move;
-                                Loser = P1;
-                                LoserMove = P1Move;
-                                break;
-
-                            case "P":
-                                Winner = P1;
-                                WinnerMove = P1Move;
-                                Loser = P2;
-                                LoserMove = P2Move;
-                                break;
-                            case "S":
-                                Winner = P1;
-                                WinnerMove = P1Move;
-                                Loser = P2;
-                                LoserMove = P2Move;
-                                break;
-                        }
-
-                        break;
-
-                }
-                GameOutput = "[\"" + Winner + "\", \"" + WinnerMove + "\"]";
-            }
-
-        }
-
-        public class Tournament
-        {
-            public string TournamentInput { get; set; }
-            public string TournamentOutput { get; set; }
-            public string Winner { get; set; }
-            public string WinnerMove { get; set; }
-            public string Second { get; set; }
-            public string SecondMove { get; set; }
-            public bool TournamentCompleted { get; set; }
-            public List<string> PlayerWaitingList = new List<string>();
-            public List<BracketedGame> GamesQueue = new List<BracketedGame>();
-
-            public Tournament(string Input)
-            {
-
-                TournamentInput = Input;
-
-
-            }
-
-
-            private void Decode()
-            {
-                string regularExpressionPattern = @"\[\[\[(.*?)]]]";
-
-                var reg = new Regex(regularExpressionPattern);
-                var matches = reg.Matches(TournamentInput);
-                foreach (var item in matches)
-                {
-                    string gamedata = item.ToString();
-
-                    string regularExpressionPattern2 = @"\[\[(.*?)]]";
-                    var reg2 = new Regex(regularExpressionPattern2);
-                    var games = reg2.Matches(gamedata);
-                    foreach (var game in games)
-                    {
-                        AddGame(game.ToString());
-                    }
-                }
-
-
-            }
-
-            private void AddGame(string GameData)
-            {
-                BracketedGame Game = new BracketedGame(GameData);
-                GamesQueue.Add(Game);
-
-            }
-
-            private void RunGames()
-            {
-
-                for (var i = 0; i < GamesQueue.Count; i++)
-                {
-                    GamesQueue[i].RunGame();
-                    AddtoWaitingList(GamesQueue[i].GameOutput);
-                }
-
-                BracketedGame Final = GamesQueue.Last();
-                Winner = Final.Winner;
-                WinnerMove = Final.WinnerMove;
-                Second = Final.Loser;
-                SecondMove = Final.LoserMove;
-
-            }
-            private void AddtoWaitingList(string Player)
-            {
-                PlayerWaitingList.Add(Player);
-                if (PlayerWaitingList.Count == 2)
-                {
-                    string GameData = "";
-                    GameData = "[" + PlayerWaitingList[0].ToString() + "," + PlayerWaitingList[1].ToString() + "]";
-                    AddGame(GameData);
-                    PlayerWaitingList.Clear();
-                }
-
-
-            }
-
-            public void Start()
-            {
-                Decode();
-                RunGames();
-            }
-
-
-        }
-
-
+ 
         private Data.DAL.IConnectionFactory connectionFactory;
 
-        public IList<Ëntities.Player> TopN( int topN)
+        public IList<Player> TopN( int topN)
         {
             connectionFactory = ConnectionHelper.GetConnection();
 
-            var context = new DbContext(connectionFactory);
+            var _context = new DbContext(connectionFactory);
 
-            var PlayerRepo = new RPSRepo(context);
+            var playerRepo = new RPSRepo(_context);
 
-            return PlayerRepo.TopN(topN);
+            return playerRepo.TopN(topN);
         }
 
-        public IList<Ëntities.Player> Championship(string textdata)
+        public IList<Player> Championship(string textData)
         {
 
-            Tournament t = new Tournament(textdata);
+            Tournament tournament = new Tournament(textData);
 
-            t.Start();
+            tournament.Start();
             connectionFactory = ConnectionHelper.GetConnection();
 
-            var context = new DbContext(connectionFactory);
+            var _context = new DbContext(connectionFactory);
 
-            var PlayerRepo = new RPSRepo(context);
+            var playerRepo = new RPSRepo(_context);
+            IList<Player> result = new List<Player>();
 
-            return PlayerRepo.UpdateScore(t.Winner,t.Second);
+            Player player1 = new Player
+            {
+                UserName = tournament.Winner,
+                Strategy = tournament.WinnerMove
+            };
+            Player player2 = new Player
+            {
+                UserName = tournament.Second,
+                Strategy = tournament.SecondMove
+            };
+            result.Add(player1);
+            result.Add(player2);
+
+            var updateResults = playerRepo.UpdateScore(tournament.Winner, tournament.Second);
+
+            return result;//;
         }
 
-        public void ManualScoreEntry(string p1name, string p2name)
+        public void ManualScoreEntry(string p1Name, string p2Name)
         {
             connectionFactory = ConnectionHelper.GetConnection();
 
-            var context = new DbContext(connectionFactory);
+            var _context = new DbContext(connectionFactory);
 
-            var PlayerRepo = new RPSRepo(context);
+            var playerRepo = new RPSRepo(_context);
 
-            var updated =  PlayerRepo.UpdateScore(p1name, p2name);
+            var updated =  playerRepo.UpdateScore(p1Name, p2Name);
 
 
         }
@@ -329,26 +75,26 @@ namespace HPE_Service.Services
         {
             connectionFactory = ConnectionHelper.GetConnection();
 
-            var context = new DbContext(connectionFactory);
+            var _context = new DbContext(connectionFactory);
 
-            var PlayerRepo = new RPSRepo(context);
+            var playerRepo = new RPSRepo(_context);
 
-             PlayerRepo.CleanDb();
+             playerRepo.CleanDb();
 
 
         }
 
-        public BracketedGame TestSolution(string onegame)
+        public BracketedGame TestSolution(string oneGameData)
         {
-            BracketedGame Game = new BracketedGame(onegame);
-            Game.RunGame();
-            return Game;
+            BracketedGame game = new BracketedGame(oneGameData);
+            game.RunGame();
+            return game;
         }
-        public Tournament Narrator(string gamedata) {
+        public Tournament Narrator(string gameData) {
 
-            Tournament Tournament = new Tournament(gamedata);
-            Tournament.Start();
-            return Tournament;
+            Tournament tournament = new Tournament(gameData);
+            tournament.Start();
+            return tournament;
 
         }
 
